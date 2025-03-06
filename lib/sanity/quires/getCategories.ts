@@ -2,18 +2,7 @@ import { client } from "../sanity";
 import { groq } from 'next-sanity';
 
 // Fetch all categories (for other uses)
-export async function getCategories() {
-  const query = `
-    *[_type == "category"] {
-      title,
-      image,
-      description,
-      slug
-    }
-  `;
-  const categories = await client.fetch(query);
-  return categories;
-}
+
 
 // Query a single category by slug
 export const categoryBySlugQuery = groq`
@@ -133,4 +122,16 @@ export const categoryQuery = groq`
     }
   }
 `;
+export async function getCategories() {
+  const query = `
+    *[_type == "category"] | order(title desc) {
+      title,
+      image,
+      description,
+      slug
+    }
+  `;
+  const categories = await client.fetch(query);
+  return categories;
+}
 

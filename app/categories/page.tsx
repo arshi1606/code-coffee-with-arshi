@@ -30,7 +30,7 @@ interface Category {
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const pageSize = 8; // Display 8 categories per page
+  const pageSize = 6; // Display 6 categories per page
 
   useEffect(() => {
     async function fetchCategories() {
@@ -82,7 +82,7 @@ export default function CategoriesPage() {
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
         Explore Categories
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-3 gap-8">
         {visibleCategories.map((category, index) => {
           let imageUrl: string | null = null;
           if (
@@ -172,3 +172,4 @@ export default function CategoriesPage() {
     </div>
   );
 }
+  

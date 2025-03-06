@@ -76,9 +76,10 @@ export const latestBlogsQuery = groq`
     "categories": categories[]->title
   }
 `;
+
 export const blogsQuery = (searchTerm = "") => {
   const searchFilter = searchTerm
-    ? ` && (title match "*${searchTerm}*" || metaDescription match "*${searchTerm}*")`
+    ? ` && (title match "*${searchTerm}*" || metaDescription match "*${searchTerm}*" || categories[]->title match "*${searchTerm}*")`
     : "";
   return `*[_type == "blog"${searchFilter}] | order(publishedAt desc) {
     _id,
