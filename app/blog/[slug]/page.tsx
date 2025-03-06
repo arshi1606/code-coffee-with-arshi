@@ -6,8 +6,7 @@ import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/components/portabletext";
 import type { PortableTextBlock, PortableTextSpan } from "@portabletext/types";
 
-// Tell Next.js that dynamic route parameters are static.
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 interface HeadingBlock extends PortableTextBlock {
   style: string;
@@ -26,6 +25,15 @@ interface Blog {
   };
 }
 
+interface PageParams {
+  slug: string;
+}
+
+// Force params to always be a Promise (Next.js expects a Promise here)
+interface BlogPageProps {
+  params: Promise<PageParams>;
+}
+
 const slugify = (text: string) => {
   return text
     .toLowerCase()
@@ -35,7 +43,6 @@ const slugify = (text: string) => {
     .replace(/[^\w-]+/g, "");
 };
 
-// Type guard to verify if a child is a PortableTextSpan.
 const isPortableTextSpan = (child: unknown): child is PortableTextSpan => {
   return (
     typeof child === "object" &&
@@ -45,7 +52,6 @@ const isPortableTextSpan = (child: unknown): child is PortableTextSpan => {
   );
 };
 
-// Helper to extract heading blocks from the PortableText body.
 const extractHeadings = (blocks: PortableTextBlock[]): HeadingBlock[] => {
   return blocks
     .filter((block): block is HeadingBlock => {
@@ -60,11 +66,10 @@ const extractHeadings = (blocks: PortableTextBlock[]): HeadingBlock[] => {
     .map((block) => block as HeadingBlock);
 };
 
-export default async function MirrorBlogDetails({
-  params: { slug },
-}: {
-  params: { slug: string };
-}) {
+export default async function MirrorBlogDetails({ params }: BlogPageProps) {
+  // Wrap params in a promise so that we always await a promise.
+  const { slug } = await Promise.resolve(params);
+
   const blogData = await getBlogBySlug(slug);
   const blog: Blog | null = blogData?.[0] ?? null;
 
@@ -76,13 +81,13 @@ export default async function MirrorBlogDetails({
     );
   }
 
-  // Use the heading field if it exists; otherwise, extract from the body.
   const headings: HeadingBlock[] =
-    blog.heading && blog.heading.length > 0 ? blog.heading : extractHeadings(blog.body);
+    blog.heading && blog.heading.length > 0
+      ? blog.heading
+      : extractHeadings(blog.body);
 
   return (
     <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
-      {/* Header */}
       <div className="flex flex-col gap-6 mb-12">
         <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-extrabold text-[#205161]">
           {blog.title}
@@ -107,7 +112,6 @@ export default async function MirrorBlogDetails({
         </div>
       </div>
 
-      {/* Main Image Banner */}
       {blog.mainImage?.asset?.url && (
         <div className="mb-10 flex justify-center">
           <Image
@@ -120,9 +124,7 @@ export default async function MirrorBlogDetails({
         </div>
       )}
 
-      {/* Content & Table of Contents */}
       <div className="flex flex-col md:flex-row-reverse gap-10">
-        {/* Sidebar with Back Button & TOC */}
         <aside className="hidden md:block md:w-1/4 sticky top-32 h-[calc(100vh-8rem)] overflow-auto p-6 rounded-lg shadow-lg">
           <div className="mb-6">
             <Link
@@ -137,7 +139,11 @@ export default async function MirrorBlogDetails({
                 stroke="currentColor"
                 className="w-5 h-5"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
               Back to Articles
             </Link>
@@ -147,7 +153,8 @@ export default async function MirrorBlogDetails({
           </h2>
           <nav className="flex flex-col gap-2">
             {headings.map((item) => {
-              const text = item.children.map((child) => child.text).join("") || "Untitled";
+              const text =
+                item.children.map((child) => child.text).join("") || "Untitled";
               const anchor = slugify(text);
               return (
                 <a
@@ -162,10 +169,12 @@ export default async function MirrorBlogDetails({
           </nav>
         </aside>
 
-        {/* Blog Body */}
         <main className="w-full md:w-3/4">
           <article className="prose max-w-none pb-16 text-[#205161]">
-            <PortableText value={blog.body} components={portableTextComponents} />
+            <PortableText
+              value={blog.body}
+              components={portableTextComponents}
+            />
           </article>
         </main>
       </div>

@@ -1,4 +1,3 @@
-// src/components/portabletext.tsx
 import { PortableTextReactComponents, PortableTextMarkComponentProps } from "@portabletext/react";
 import Image from "next/image";
 import imageUrlBuilder from "@sanity/image-url";
@@ -6,11 +5,10 @@ import { client } from "@/lib/sanity/quires/sanityclient";
 import type { PortableTextBlock, PortableTextSpan, TypedObject } from "@portabletext/types";
 
 // ------------------------------------------------------------------
-// 1. Define a minimal SanityImageSource interface since the package doesn't export one.
+// 1. Define a minimal SanityImageSource interface.
 export interface SanityImageSource {
   _ref?: string;
   _type?: string;
-  // Add any additional fields as needed.
 }
 
 // ------------------------------------------------------------------
@@ -23,7 +21,7 @@ export function urlFor(source: SanityImageSource) {
 }
 
 // ------------------------------------------------------------------
-// 3. A simple slugify function to generate IDs for headings.
+// 3. A simple slugify function.
 const slugify = (text: string) => {
   return text
     .toString()
@@ -50,8 +48,6 @@ interface ImageBlock {
 
 // ------------------------------------------------------------------
 // 6. A helper function to extract text from a block's children.
-// PortableTextBlock children are defined as an array of (PortableTextSpan | ArbitraryTypedObject).
-// We assume that for headings the first child is a span with a "text" property.
 function extractTextFromBlock(value: PortableTextBlock): string {
   if (!value.children || value.children.length === 0) return "";
   const firstChild = value.children[0] as PortableTextSpan;
@@ -63,7 +59,6 @@ function extractTextFromBlock(value: PortableTextBlock): string {
 export const portableTextComponents: PortableTextReactComponents = {
   types: {
     image: ({ value }: { value: ImageBlock }) => {
-      console.log("Image block value:", value);
       const imageUrl = value?.asset ? urlFor(value.asset) : null;
       if (!imageUrl) return null;
       return (

@@ -1,145 +1,168 @@
-// app/categories/[slug]/page.tsx
-import { notFound } from "next/navigation";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { groq } from "next-sanity";
-import { client } from "@/lib/sanity/quires/sanityclient";
-import { categoryQuery } from "@/lib/sanity/quires/getCategories";
+import { getBlogBySlug } from "@/lib/sanity/quires/getblogs";
+import { PortableText } from "@portabletext/react";
+import { portableTextComponents } from "@/components/portabletext";
+import type { PortableTextBlock, PortableTextSpan } from "@portabletext/types";
 
-// Generate static params for Next.js 13 app router
-export async function generateStaticParams() {
-  const categories: { slug?: { current?: string } }[] = await client.fetch(
-    groq`*[_type == "category"] { slug }`
-  );
+export const dynamicParams = false;
 
-  // Filter out documents with invalid slugs
-  const validCategories = categories.filter(
-    (category) => category.slug && category.slug.current
-  );
-
-  return validCategories.map((category) => ({
-    slug: category.slug!.current,
-  }));
+interface HeadingBlock extends PortableTextBlock {
+  style: string;
+  children: PortableTextSpan[];
 }
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
-
-interface BlogPreview {
-  _id: string;
-  slug: { current: string };
+interface Blog {
   title: string;
-  metaDescription: string;
-  mainImage?: {
-    asset?: {
-      url: string;
-    };
-  };
+  mainImage: { asset: { url: string } };
+  publishedAt: string;
+  body: PortableTextBlock[];
+  heading?: HeadingBlock[];
   author?: {
     name: string;
-    image?: {
-      asset?: {
-        url: string;
-      };
-    };
+    image?: { asset?: { url: string } };
   };
 }
 
-interface CategoryData {
-  title: string;
-  description: string;
-  image?: {
-    asset?: {
-      url: string;
-    };
-  };
-  blogs?: BlogPreview[];
+interface BlogPageProps {
+  params: { slug: string };
 }
 
-export default async function CategoryPage({ params }: PageProps) {
-  // Fetch data based on the slug parameter using the updated query
-  const categoryData: CategoryData | null = await client.fetch(categoryQuery, {
-    slug: params.slug,
-  });
+const slugify = (text: string) => {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "");
+};
 
-  if (!categoryData) {
-    notFound();
+const isPortableTextSpan = (child: unknown): child is PortableTextSpan => {
+  return (
+    typeof child === "object" &&
+    child !== null &&
+    "_type" in child &&
+    (child as PortableTextSpan)._type === "span"
+  );
+};
+
+const extractHeadings = (blocks: PortableTextBlock[]): HeadingBlock[] => {
+  return blocks
+    .filter((block): block is HeadingBlock => {
+      return (
+        block._type === "block" &&
+        typeof block.style === "string" &&
+        /^h\d/.test(block.style) &&
+        Array.isArray(block.children) &&
+        block.children.every(isPortableTextSpan)
+      );
+    })
+    .map((block) => block as HeadingBlock);
+};
+
+export default async function MirrorBlogDetails({ params }: BlogPageProps) {
+  const { slug } = params;
+
+  const blogData = await getBlogBySlug(slug);
+  const blog: Blog | null = blogData?.[0] ?? null;
+
+  if (!blog) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <h1 className="text-2xl text-[#205161]">Blog not found.</h1>
+      </div>
+    );
   }
 
-  const { title, description, image, blogs } = categoryData;
+  const headings: HeadingBlock[] =
+    blog.heading && blog.heading.length > 0 ? blog.heading : extractHeadings(blog.body);
 
   return (
-    <div className="container mx-auto py-10 px-4 min-h-screen">
-      <h1 className="text-4xl font-extrabold text-center text-gray-800">
-        {title}
-      </h1>
+    <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
+      <div className="flex flex-col gap-6 mb-12">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-extrabold text-[#205161]">
+          {blog.title}
+        </h1>
+        <div className="flex justify-center items-center gap-3">
+          {blog.author?.image?.asset?.url && (
+            <Image
+              alt={blog.author?.name || "Unknown"}
+              className="rounded-full border-2 border-[#205161]"
+              src={blog.author.image.asset.url}
+              width={40}
+              height={40}
+            />
+          )}
+          <span className="text-base text-[#205161]">
+            By {blog.author?.name || "Unknown"}
+          </span>
+          <span className="text-base text-[#205161] mx-2">|</span>
+          <span className="text-base text-[#205161]">
+            {new Date(blog.publishedAt).toDateString()}
+          </span>
+        </div>
+      </div>
 
-      {image?.asset?.url && (
-        <div className="flex justify-center my-6">
+      {blog.mainImage?.asset?.url && (
+        <div className="mb-10 flex justify-center">
           <Image
-            src={image.asset.url}
-            alt={title}
-            width={600}  // Image is a bit smaller now
-            height={300} // Image is a bit smaller now
+            src={blog.mainImage.asset.url}
+            alt={blog.title}
             className="rounded-lg shadow-lg"
+            width={800}
+            height={450}
           />
         </div>
       )}
 
-      <p className="text-center text-gray-600 mt-4">{description}</p>
-
-      {/* Display blogs if they exist */}
-      {blogs && blogs.length > 0 ? (
-        <div className="mt-10">
-          <h2 className="text-2xl font-semibold">All Blogs</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-            {blogs.map((blog: BlogPreview) => (
-              <Link key={blog._id} href={`/blog/${blog.slug.current}`}>
-                <div className="border rounded-lg overflow-hidden shadow hover:shadow-lg cursor-pointer flex flex-col h-96">
-                  {blog.mainImage?.asset?.url && (
-                    <div className="relative h-1/2 w-full">
-                      <Image
-                        src={blog.mainImage.asset.url}
-                        alt={blog.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="p-4 flex flex-col justify-between flex-grow">
-                    <h3 className="text-lg font-semibold">{blog.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      {blog.metaDescription}
-                    </p>
-                    <div className="mt-4 flex items-center">
-                      {blog.author?.image?.asset?.url && (
-                        <div className="relative h-8 w-8 mr-2">
-                          <Image
-                            src={blog.author.image.asset.url}
-                            alt={blog.author.name}
-                            fill
-                            className="object-cover rounded-full"
-                          />
-                        </div>
-                      )}
-                      <span className="text-xs text-gray-500">
-                        {blog.author?.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+      <div className="flex flex-col md:flex-row-reverse gap-10">
+        <aside className="hidden md:block md:w-1/4 sticky top-32 h-[calc(100vh-8rem)] overflow-auto p-6 rounded-lg shadow-lg">
+          <div className="mb-6">
+            <Link
+              href="/blogs"
+              className="flex items-center justify-center gap-2 bg-[#205161] text-white font-medium px-4 py-2 rounded-full hover:bg-[#17394a] transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Articles
+            </Link>
           </div>
-        </div>
-      ) : (
-        <p className="text-center mt-6 text-gray-600">
-          No blogs available in this category.
-        </p>
-      )}
+          <h2 className="text-lg font-semibold text-[#205161] mb-4">
+            Table of Contents
+          </h2>
+          <nav className="flex flex-col gap-2">
+            {headings.map((item) => {
+              const text =
+                item.children.map((child) => child.text).join("") || "Untitled";
+              const anchor = slugify(text);
+              return (
+                <a
+                  key={item._key}
+                  href={`#${anchor}`}
+                  className="text-sm py-1 px-2 rounded-md hover:bg-[#205161] hover:text-white transition-colors"
+                >
+                  {text}
+                </a>
+              );
+            })}
+          </nav>
+        </aside>
+
+        <main className="w-full md:w-3/4">
+          <article className="prose max-w-none pb-16 text-[#205161]">
+            <PortableText value={blog.body} components={portableTextComponents} />
+          </article>
+        </main>
+      </div>
     </div>
   );
 }
