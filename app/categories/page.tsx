@@ -153,7 +153,7 @@ export default function CategoriesPage() {
               onClick={() => setCurrentPage(page)}
               className={`px-4 py-2 border rounded transition-colors ${
                 page === currentPage
-                  ? "bg-[#205161] text-white"
+                  ? "bg-[#205161] text-white"  // Active button style (changed color)
                   : "bg-white text-[#205161] hover:bg-gray-200"
               }`}
             >
