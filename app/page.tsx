@@ -4,14 +4,47 @@ import { client } from '@/lib/sanity/quires/sanityclient';
 import Image from 'next/image';
 import Link from 'next/link';
 
+interface Blog {
+  _id: string;
+  title: string;
+  metaDescription?: string;
+  mainImage?: {
+    asset?: {
+      url: string;
+    };
+  };
+  author?: {
+    name?: string;
+    image?: {
+      asset?: {
+        url: string;
+      };
+    };
+  };
+  slug: {
+    current: string;
+  };
+}
+
+interface Category {
+  title: string;
+  slug?: { current?: string };
+  image?: {
+    asset?: {
+      url: string;
+    };
+  };
+}
+
 export default async function HomePage() {
-  // Fetch the latest 3 blog posts and up to 4 categories (categoriesQuery already limits to 4 in descending order)
-  const blogs = await client.fetch(latestBlogsQuery);
-  const categories = await client.fetch(categoriesQuery, { limit: 4 });
+  // Fetch the latest 3 blog posts and up to 4 categories,
+  // explicitly typing the responses with generics
+  const blogs: Blog[] = await client.fetch<Blog[]>(latestBlogsQuery);
+  const categories: Category[] = await client.fetch<Category[]>(categoriesQuery, { limit: 4 });
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* ✅ Hero Section with expanded content and enhanced styling */}
+      {/* ✅ Hero Section */}
       <section className="relative bg-[#205161] text-white py-32 flex flex-col items-center text-center shadow-inner">
         <div className="absolute inset-0 bg-black opacity-30 mix-blend-overlay"></div>
         <h1 className="text-6xl font-extrabold tracking-tight mb-4 relative z-10 animate-fade-in drop-shadow-lg">
@@ -39,7 +72,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-
       {/* ✅ Latest Blogs Section */}
       <section className="py-20 px-6 md:px-12">
         <div className="max-w-screen-xl mx-auto">
@@ -51,7 +83,7 @@ export default async function HomePage() {
           </div>
           {blogs && blogs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogs.map((blog: any) => {
+              {blogs.map((blog: Blog) => {
                 const mainImageUrl = blog?.mainImage?.asset?.url;
                 return (
                   <article
@@ -63,8 +95,8 @@ export default async function HomePage() {
                         <Image
                           src={mainImageUrl}
                           alt={blog.title || 'Blog Image'}
-                          layout="fill"
-                          objectFit="cover"
+                          fill
+                          style={{ objectFit: 'cover' }}
                           className="transition-transform duration-300 hover:scale-105"
                         />
                       </div>
@@ -84,9 +116,9 @@ export default async function HomePage() {
                           <div className="relative h-10 w-10 mr-3">
                             <Image
                               src={blog.author.image.asset.url}
-                              alt={blog.author.name}
-                              layout="fill"
-                              objectFit="cover"
+                              alt={blog.author.name || 'Author'}
+                              fill
+                              style={{ objectFit: 'cover' }}
                               className="rounded-full"
                             />
                           </div>
@@ -132,12 +164,16 @@ export default async function HomePage() {
           </div>
           {categories && categories.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {categories.map((category: any, index: number) => {
+              {categories.map((category: Category, index: number) => {
                 const imageUrl = category.image?.asset?.url || "";
                 return (
                   <Link
                     key={index}
-                    href={category.slug?.current ? `/categories/${category.slug.current}` : "#"}
+                    href={
+                      category.slug?.current
+                        ? `/categories/${category.slug.current}`
+                        : "#"
+                    }
                   >
                     <div className="border border-gray-200 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 cursor-pointer bg-white h-80 flex flex-col">
                       {imageUrl ? (
@@ -145,8 +181,8 @@ export default async function HomePage() {
                           <Image
                             src={imageUrl}
                             alt={category.title}
-                            layout="fill"
-                            objectFit="cover"
+                            fill
+                            style={{ objectFit: 'cover' }}
                             className="rounded-t-xl"
                           />
                         </div>
@@ -171,7 +207,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ✅ Additional Information Section with expanded content and enhanced styling */}
+      {/* ✅ Additional Information Section */}
       <section className="py-20 px-6 md:px-12 bg-gradient-to-b from-gray-100 to-gray-200">
         <div className="max-w-screen-xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6 text-gray-900">Did You Know?</h2>
@@ -181,9 +217,8 @@ export default async function HomePage() {
           <p className="text-lg text-gray-700 mb-4">
             Explore surprising stories and insights that challenge the status quo and ignite creative thinking in unexpected ways.
           </p>
-          {/* Additional Additional Section Content */}
           <p className="text-lg text-gray-700 mb-4">
-            Whether you're a seasoned professional or just starting out, our platform offers a unique blend of perspectives designed to inspire and inform.
+            Whether you&apos;re a seasoned professional or just starting out, our platform offers a unique blend of perspectives designed to inspire and inform.
           </p>
           <p className="text-lg text-gray-700 mb-8">
             Stay updated with my latest research, interviews with industry leaders, and tips to boost your creative journey.

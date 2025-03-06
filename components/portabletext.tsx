@@ -2,19 +2,29 @@
 import { PortableTextReactComponents, PortableTextMarkComponentProps } from "@portabletext/react";
 import Image from "next/image";
 import imageUrlBuilder from "@sanity/image-url";
-import { client } from "@/lib/sanity/quires/sanityclient"; // adjust path as needed
-import type { TypedObject } from "@portabletext/types";
+import { client } from "@/lib/sanity/quires/sanityclient";
+import type { PortableTextBlock, PortableTextSpan, TypedObject } from "@portabletext/types";
 
-// Create the image URL builder using your Sanity client.
+// ------------------------------------------------------------------
+// 1. Define a minimal SanityImageSource interface since the package doesn't export one.
+export interface SanityImageSource {
+  _ref?: string;
+  _type?: string;
+  // Add any additional fields as needed.
+}
+
+// ------------------------------------------------------------------
+// 2. Create the image URL builder using your Sanity client.
 const builder = imageUrlBuilder(client);
 
 // Utility function to build image URLs.
-export function urlFor(source: any) {
+export function urlFor(source: SanityImageSource) {
   return builder.image(source).url();
 }
 
-// Simple slugify function to generate IDs for headings.
-const slugify = (text: any) => {
+// ------------------------------------------------------------------
+// 3. A simple slugify function to generate IDs for headings.
+const slugify = (text: string) => {
   return text
     .toString()
     .toLowerCase()
@@ -24,20 +34,36 @@ const slugify = (text: any) => {
     .replace(/[^\w-]+/g, "");
 };
 
-// Create a LinkMark interface that extends TypedObject.
+// ------------------------------------------------------------------
+// 4. Define the LinkMark interface.
 interface LinkMark extends TypedObject {
   _type: "link";
   href: string;
 }
 
+// ------------------------------------------------------------------
+// 5. Define the type for image block values.
+interface ImageBlock {
+  asset: SanityImageSource;
+  alt?: string;
+}
+
+// ------------------------------------------------------------------
+// 6. A helper function to extract text from a block's children.
+// PortableTextBlock children are defined as an array of (PortableTextSpan | ArbitraryTypedObject).
+// We assume that for headings the first child is a span with a "text" property.
+function extractTextFromBlock(value: PortableTextBlock): string {
+  if (!value.children || value.children.length === 0) return "";
+  const firstChild = value.children[0] as PortableTextSpan;
+  return firstChild?.text || "";
+}
+
+// ------------------------------------------------------------------
+// 7. Define your PortableText components.
 export const portableTextComponents: PortableTextReactComponents = {
   types: {
-    image: ({ value }) => {
-      // Debug: log the image block data
+    image: ({ value }: { value: ImageBlock }) => {
       console.log("Image block value:", value);
-      
-      // Check if asset data exists. Note: if your block uses a different structure or type (e.g., "figure"),
-      // update this check accordingly.
       const imageUrl = value?.asset ? urlFor(value.asset) : null;
       if (!imageUrl) return null;
       return (
@@ -59,54 +85,72 @@ export const portableTextComponents: PortableTextReactComponents = {
         {children}
       </p>
     ),
-    h1: ({ value }: any) => (
-      <h1
-        id={slugify(value.children[0].text)}
-        className="text-theme-slateGray text-[35px] sm:text-[40px] md:text-[45px] lg:text-[50px] xl:text-[62px] font-semibold text-left leading-[50px] sm:leading-[55px] md:leading-[60px] lg:leading-[72px]"
-      >
-        {value.children[0].text}
-      </h1>
-    ),
-    h2: ({ value }: any) => (
-      <h2
-        id={slugify(value.children[0].text)}
-        className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
-      >
-        {value.children[0].text}
-      </h2>
-    ),
-    h3: ({ value }: any) => (
-      <h3
-        id={slugify(value.children[0].text)}
-        className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
-      >
-        {value.children[0].text}
-      </h3>
-    ),
-    h4: ({ value }: any) => (
-      <h4
-        id={slugify(value.children[0].text)}
-        className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
-      >
-        {value.children[0].text}
-      </h4>
-    ),
-    h5: ({ value }: any) => (
-      <h5
-        id={slugify(value.children[0].text)}
-        className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
-      >
-        {value.children[0].text}
-      </h5>
-    ),
-    h6: ({ value }: any) => (
-      <h6
-        id={slugify(value.children[0].text)}
-        className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
-      >
-        {value.children[0].text}
-      </h6>
-    ),
+    h1: ({ value }: { value: PortableTextBlock }) => {
+      const text = extractTextFromBlock(value);
+      return (
+        <h1
+          id={slugify(text)}
+          className="text-theme-slateGray text-[35px] sm:text-[40px] md:text-[45px] lg:text-[50px] xl:text-[62px] font-semibold text-left leading-[50px] sm:leading-[55px] md:leading-[60px] lg:leading-[72px]"
+        >
+          {text}
+        </h1>
+      );
+    },
+    h2: ({ value }: { value: PortableTextBlock }) => {
+      const text = extractTextFromBlock(value);
+      return (
+        <h2
+          id={slugify(text)}
+          className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
+        >
+          {text}
+        </h2>
+      );
+    },
+    h3: ({ value }: { value: PortableTextBlock }) => {
+      const text = extractTextFromBlock(value);
+      return (
+        <h3
+          id={slugify(text)}
+          className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
+        >
+          {text}
+        </h3>
+      );
+    },
+    h4: ({ value }: { value: PortableTextBlock }) => {
+      const text = extractTextFromBlock(value);
+      return (
+        <h4
+          id={slugify(text)}
+          className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
+        >
+          {text}
+        </h4>
+      );
+    },
+    h5: ({ value }: { value: PortableTextBlock }) => {
+      const text = extractTextFromBlock(value);
+      return (
+        <h5
+          id={slugify(text)}
+          className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
+        >
+          {text}
+        </h5>
+      );
+    },
+    h6: ({ value }: { value: PortableTextBlock }) => {
+      const text = extractTextFromBlock(value);
+      return (
+        <h6
+          id={slugify(text)}
+          className="text-[24px] md:text-[28px] font-semibold font-dm !leading-[1.3] section-title pb-6 pt-8 md:pt-10 lg:pt-11"
+        >
+          {text}
+        </h6>
+      );
+    },
     blockquote: ({ children }) => (
       <blockquote className="border-l-4 border-blue-500 pl-4 italic my-4 text-gray-700">
         {children}

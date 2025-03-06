@@ -9,6 +9,11 @@ interface FormData {
   message: string;
 }
 
+interface FormResult {
+  success: boolean;
+  message: string;
+}
+
 export default function ContactForm() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -17,7 +22,7 @@ export default function ContactForm() {
     message: "",
   });
 
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [result, setResult] = useState<FormResult | null>(null);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -78,32 +83,81 @@ export default function ContactForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-200 p-6">
-      <div className="w-full max-w-lg  shadow-lg rounded-lg p-8 bg-white">
-        <h2 className="text-3xl font-bold text-center text-[#205161] mb-4">Contact Us</h2>
-        <p className="text-center text-gray-600 mb-6">We'd love to hear from you!</p>
+      <div className="w-full max-w-lg shadow-lg rounded-lg p-8 bg-white">
+        <h2 className="text-3xl font-bold text-center text-[#205161] mb-4">
+          Contact Us
+        </h2>
+        <p className="text-center text-gray-600 mb-6">We&apos;d love to hear from you!</p>
         <form onSubmit={onSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-            <input type="text" id="name" value={formData.name} onChange={handleChange} placeholder="Your Name" className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]" required />
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Your Name"
+              className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]"
+              required
+            />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" id="email" value={formData.email} onChange={handleChange} placeholder="Your Email" className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]" required />
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Your Email"
+              className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]"
+              required
+            />
           </div>
           <div>
-            <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Subject</label>
-            <input type="text" id="subject" value={formData.subject} onChange={handleChange} placeholder="Subject" className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]" required />
+            <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+              Subject
+            </label>
+            <input
+              type="text"
+              id="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              placeholder="Subject"
+              className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]"
+              required
+            />
           </div>
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
-            <textarea id="message" value={formData.message} onChange={handleChange} placeholder="Your Message" rows={4} className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]" required />
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+              Message
+            </label>
+            <textarea
+              id="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Your Message"
+              rows={4}
+              className="mt-1 w-full p-2.5 border rounded-lg shadow-sm focus:ring-[#205161] focus:border-[#205161]"
+              required
+            />
           </div>
-          <button type="submit" className="w-full py-3 text-white font-semibold bg-[#205161] rounded-lg hover:bg-[#1a3f4f] focus:ring-4 focus:ring-[#205161]">
+          <button
+            type="submit"
+            className="w-full py-3 text-white font-semibold bg-[#205161] rounded-lg hover:bg-[#1a3f4f] focus:ring-4 focus:ring-[#205161]"
+          >
             Submit
           </button>
         </form>
         {result && (
-          <div className={`mt-4 p-3 text-center rounded-lg ${result.success ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
+          <div
+            className={`mt-4 p-3 text-center rounded-lg ${
+              result.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
+            }`}
+          >
             {result.message}
           </div>
         )}

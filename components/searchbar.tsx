@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 
-export default function SearchBar() {
-  const [query, setQuery] = useState("");
+export default function SearchBar(): JSX.Element {
+  const [query, setQuery] = useState<string>("");
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setQuery("");
   };
 
@@ -18,7 +18,7 @@ export default function SearchBar() {
         placeholder="Search..."
         className="flex-grow outline-none text-gray-800 placeholder-gray-500"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
       />
       {query && (
         <button onClick={handleCancel} className="ml-2">

@@ -17,13 +17,17 @@ interface Category {
   subCategories?: SubCategory[];
 }
 
-export default async function CategoriesNavbar() {
+export default async function CategoriesNavbar(): Promise<JSX.Element> {
   const categories: Category[] = await getCategories();
   return <CategoriesNavbarContent categories={categories} />;
 }
 
-function CategoriesNavbarContent({ categories }: { categories: Category[] }) {
-  return ( 
+interface CategoriesNavbarContentProps {
+  categories: Category[];
+}
+
+function CategoriesNavbarContent({ categories }: CategoriesNavbarContentProps): JSX.Element {
+  return (
     <div className="container mx-auto">
       <ul
         className="
@@ -44,7 +48,11 @@ function CategoriesNavbarContent({ categories }: { categories: Category[] }) {
           <React.Fragment key={index}>
             <li className="relative group">
               <Link
-                href={category.slug?.current ? `/categories/${category.slug.current}` : "#"}
+                href={
+                  category.slug?.current
+                    ? `/categories/${category.slug.current}`
+                    : "#"
+                }
                 className="hover:text-gray-900 transition-colors"
               >
                 {category.title}

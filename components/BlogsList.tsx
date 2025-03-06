@@ -22,9 +22,9 @@ interface BlogsListProps {
   blogs: Blog[];
 }
 
-const BlogsList: React.FC<BlogsListProps> = ({ blogs }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [visibleCount, setVisibleCount] = useState(9);
+const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [visibleCount, setVisibleCount] = useState<number>(9);
 
   const filteredBlogs = useMemo(() => {
     const trimmedSearchTerm = searchTerm.trim().toLowerCase();

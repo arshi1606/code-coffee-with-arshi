@@ -8,7 +8,7 @@ interface BlogNavbarProps {
   setSearchTerm: (value: string) => void;
 }
 
-const BlogNavbar: React.FC<BlogNavbarProps> = ({ searchTerm, setSearchTerm }) => {
+const BlogNavbar: React.FC<BlogNavbarProps> = ({ searchTerm, setSearchTerm }): JSX.Element => {
   return (
     <div className="flex justify-between items-center w-full mb-16">
       {/* Left side: Blog navigation */}
@@ -29,7 +29,7 @@ const BlogNavbar: React.FC<BlogNavbarProps> = ({ searchTerm, setSearchTerm }) =>
           placeholder="Search..."
           autoComplete="off"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
         />
         <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
           <svg

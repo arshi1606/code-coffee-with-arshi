@@ -1,9 +1,8 @@
-// components/Footer.tsx
 import React from "react";
 import Link from "next/link";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
-export default function Footer() {
+export default function Footer(): JSX.Element {
   return (
     <footer className="bg-[#205161] text-white py-10">
       <div className="container mx-auto px-6 md:px-12">
@@ -82,8 +81,6 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
-  
         </div>
 
         {/* Bottom Section: centered text */}

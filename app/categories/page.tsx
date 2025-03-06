@@ -6,17 +6,25 @@ import imageUrlBuilder from "@sanity/image-url";
 import { client } from "@/lib/sanity/quires/sanityclient";
 import { getCategories } from "@/lib/sanity/quires/getCategories";
 
-// Setup the URL builder for Sanity images
-const builder = imageUrlBuilder(client);
-function urlFor(source: any) {
-  return builder.image(source).url();
+interface SanityImageAsset {
+  _ref: string;
+}
+
+interface SanityImage {
+  asset: SanityImageAsset;
 }
 
 interface Category {
   title: string;
   slug?: { current: string };
-  image?: string | any;
+  image?: string | SanityImage;
   description?: string;
+}
+
+// Setup the URL builder for Sanity images
+const builder = imageUrlBuilder(client);
+function urlFor(source: string | SanityImage): string {
+  return builder.image(source).url();
 }
 
 export default async function CategoriesPage() {
@@ -31,16 +39,27 @@ export default async function CategoriesPage() {
         {categories.map((category, index) => {
           let imageUrl: string | null = null;
           // If image is a non-empty string, use it; otherwise, try building the URL from the asset object.
-          if (typeof category.image === "string" && category.image.trim() !== "") {
+          if (
+            typeof category.image === "string" &&
+            category.image.trim() !== ""
+          ) {
             imageUrl = category.image;
-          } else if (category.image && category.image.asset?._ref) {
-            imageUrl = urlFor(category.image);
+          } else if (
+            category.image &&
+            typeof category.image !== "string" &&
+            (category.image as SanityImage).asset?._ref
+          ) {
+            imageUrl = urlFor(category.image as SanityImage);
           }
 
           return (
             <Link
               key={index}
-              href={category.slug?.current ? `/categories/${category.slug.current}` : "#"}
+              href={
+                category.slug?.current
+                  ? `/categories/${category.slug.current}`
+                  : "#"
+              }
             >
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 cursor-pointer bg-white h-[400px] flex flex-col">
                 {imageUrl ? (

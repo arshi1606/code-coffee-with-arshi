@@ -15,12 +15,16 @@ interface NavbarType {
   menuItems: MenuItem[];
 }
 
-export default async function Navbar() {
+export default async function Navbar(): Promise<JSX.Element> {
   const navbar: NavbarType = await getNavbar();
   return <NavbarContent navbar={navbar} />;
 }
 
-function NavbarContent({ navbar }: { navbar: NavbarType }) {
+interface NavbarContentProps {
+  navbar: NavbarType;
+}
+
+function NavbarContent({ navbar }: NavbarContentProps): JSX.Element {
   return (
     <header
       id="header"
@@ -37,13 +41,13 @@ function NavbarContent({ navbar }: { navbar: NavbarType }) {
           </div>
         </div>
       </div>
-      {/* Mobile view remains unchanged */}
+      {/* Mobile view */}
       <MobileMenuToggle navbar={navbar} />
     </header>
   );
 }
 
-function Logo() {
+function Logo(): JSX.Element {
   return (
     <Link href="/">
       <Image
@@ -58,7 +62,7 @@ function Logo() {
   );
 }
 
-function LogoSmall() {
+function LogoSmall(): JSX.Element {
   return (
     <Link href="/">
       <Image
@@ -73,7 +77,11 @@ function LogoSmall() {
   );
 }
 
-function DesktopMenu({ navbar }: { navbar: NavbarType }) {
+interface DesktopMenuProps {
+  navbar: NavbarType;
+}
+
+function DesktopMenu({ navbar }: DesktopMenuProps): JSX.Element {
   return (
     <nav className="flex items-center gap-12">
       {navbar.menuItems.map((item, index) => (
@@ -89,7 +97,11 @@ function DesktopMenu({ navbar }: { navbar: NavbarType }) {
   );
 }
 
-function MobileMenuToggle({ navbar }: { navbar: NavbarType }) {
+interface MobileMenuToggleProps {
+  navbar: NavbarType;
+}
+
+function MobileMenuToggle({ navbar }: MobileMenuToggleProps): JSX.Element {
   return (
     <div className="lg:hidden">
       <input type="checkbox" id="mobile-menu-toggle" className="peer hidden" />

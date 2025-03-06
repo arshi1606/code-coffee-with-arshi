@@ -1,31 +1,28 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getBlogBySlug } from "@/lib/sanity/quires/getblogs";
 import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/components/portabletext";
+import type { PortableTextBlock, PortableTextSpan } from "@portabletext/types";
 
-interface HeadingBlock {
-  _type: string;
+// Tell Next.js that dynamic route parameters are static.
+export const dynamicParams = false;
+
+interface HeadingBlock extends PortableTextBlock {
   style: string;
-  children: Array<{ text: string }>;
-  _key: string;
+  children: PortableTextSpan[];
 }
 
 interface Blog {
   title: string;
   mainImage: { asset: { url: string } };
   publishedAt: string;
-  body: any;
+  body: PortableTextBlock[];
   heading?: HeadingBlock[];
   author?: {
     name: string;
     image?: { asset?: { url: string } };
-  };
-}
-
-interface BlogDetailsProps {
-  params: {
-    slug: string;
   };
 }
 
@@ -38,37 +35,52 @@ const slugify = (text: string) => {
     .replace(/[^\w-]+/g, "");
 };
 
-// Helper to extract heading blocks from the PortableText body
-const extractHeadings = (blocks: any[]): HeadingBlock[] => {
-  return blocks
-    .filter(
-      (block: any) =>
-        block._type === "block" &&
-        typeof block.style === "string" &&
-        /^h\d/.test(block.style)
-    )
-    .map((block: any) => ({
-      _type: block._type,
-      style: block.style,
-      children: block.children,
-      _key: block._key,
-    }));
+// Type guard to verify if a child is a PortableTextSpan.
+const isPortableTextSpan = (child: unknown): child is PortableTextSpan => {
+  return (
+    typeof child === "object" &&
+    child !== null &&
+    "_type" in child &&
+    (child as PortableTextSpan)._type === "span"
+  );
 };
 
-export default async function MirrorBlogDetails({ params: { slug } }: BlogDetailsProps) {
+// Helper to extract heading blocks from the PortableText body.
+const extractHeadings = (blocks: PortableTextBlock[]): HeadingBlock[] => {
+  return blocks
+    .filter((block): block is HeadingBlock => {
+      return (
+        block._type === "block" &&
+        typeof block.style === "string" &&
+        /^h\d/.test(block.style) &&
+        Array.isArray(block.children) &&
+        block.children.every(isPortableTextSpan)
+      );
+    })
+    .map((block) => block as HeadingBlock);
+};
+
+export default async function MirrorBlogDetails({
+  params: { slug },
+}: {
+  params: { slug: string };
+}) {
   const blogData = await getBlogBySlug(slug);
   const blog: Blog | null = blogData?.[0] ?? null;
 
   if (!blog) {
-    return <p className="text-center text-lg text-[#205161] mt-10">Blog not found.</p>;
+    return (
+      <p className="text-center text-lg text-[#205161] mt-10">
+        Blog not found.
+      </p>
+    );
   }
 
-  // Use the heading field if it exists and has items; otherwise, extract from the body.
+  // Use the heading field if it exists; otherwise, extract from the body.
   const headings: HeadingBlock[] =
     blog.heading && blog.heading.length > 0 ? blog.heading : extractHeadings(blog.body);
 
   return (
-    // Increased container width: max-w-7xl instead of max-w-5xl
     <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
       {/* Header */}
       <div className="flex flex-col gap-6 mb-12">
@@ -77,10 +89,12 @@ export default async function MirrorBlogDetails({ params: { slug } }: BlogDetail
         </h1>
         <div className="flex justify-center items-center gap-3">
           {blog.author?.image?.asset?.url && (
-            <img
+            <Image
               alt={blog.author?.name || "Unknown"}
-              className="rounded-full w-10 h-10 border-2 border-[#205161]"
+              className="rounded-full border-2 border-[#205161]"
               src={blog.author.image.asset.url}
+              width={40}
+              height={40}
             />
           )}
           <span className="text-base text-[#205161]">
@@ -93,18 +107,20 @@ export default async function MirrorBlogDetails({ params: { slug } }: BlogDetail
         </div>
       </div>
 
-      {/* Main Image Banner (smaller & centered) */}
+      {/* Main Image Banner */}
       {blog.mainImage?.asset?.url && (
         <div className="mb-10 flex justify-center">
-          <img
+          <Image
             src={blog.mainImage.asset.url}
             alt={blog.title}
-            className="w-3/4 rounded-lg shadow-lg"
+            className="rounded-lg shadow-lg"
+            width={800}
+            height={450}
           />
         </div>
       )}
 
-      {/* Content & Table of Contents (Mirrored Layout) */}
+      {/* Content & Table of Contents */}
       <div className="flex flex-col md:flex-row-reverse gap-10">
         {/* Sidebar with Back Button & TOC */}
         <aside className="hidden md:block md:w-1/4 sticky top-32 h-[calc(100vh-8rem)] overflow-auto p-6 rounded-lg shadow-lg">
@@ -126,7 +142,9 @@ export default async function MirrorBlogDetails({ params: { slug } }: BlogDetail
               Back to Articles
             </Link>
           </div>
-          <h2 className="text-lg font-semibold text-[#205161] mb-4">Table of Contents</h2>
+          <h2 className="text-lg font-semibold text-[#205161] mb-4">
+            Table of Contents
+          </h2>
           <nav className="flex flex-col gap-2">
             {headings.map((item) => {
               const text = item.children.map((child) => child.text).join("") || "Untitled";

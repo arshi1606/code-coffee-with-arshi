@@ -28,9 +28,40 @@ interface PageProps {
   };
 }
 
+interface BlogPreview {
+  _id: string;
+  slug: { current: string };
+  title: string;
+  metaDescription: string;
+  mainImage?: {
+    asset?: {
+      url: string;
+    };
+  };
+  author?: {
+    name: string;
+    image?: {
+      asset?: {
+        url: string;
+      };
+    };
+  };
+}
+
+interface CategoryData {
+  title: string;
+  description: string;
+  image?: {
+    asset?: {
+      url: string;
+    };
+  };
+  blogs?: BlogPreview[];
+}
+
 export default async function CategoryPage({ params }: PageProps) {
   // Fetch data based on the slug parameter using the updated query
-  const categoryData = await client.fetch(categoryQuery, {
+  const categoryData: CategoryData | null = await client.fetch(categoryQuery, {
     slug: params.slug,
   });
 
@@ -61,59 +92,47 @@ export default async function CategoryPage({ params }: PageProps) {
       <p className="text-center text-gray-600 mt-4">{description}</p>
 
       {/* Display blogs if they exist */}
-      {blogs?.length > 0 ? (
+      {blogs && blogs.length > 0 ? (
         <div className="mt-10">
           <h2 className="text-2xl font-semibold">All Blogs</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-            {blogs.map(
-              (blog: {
-                _id: string;
-                slug: { current: string };
-                title: string;
-                metaDescription: string;
-                mainImage: { asset: { url: string } };
-                author?: {
-                  name: string;
-                  image?: { asset?: { url: string } };
-                };
-              }) => (
-                <Link key={blog._id} href={`/blog/${blog.slug.current}`}>
-                  <div className="border rounded-lg overflow-hidden shadow hover:shadow-lg cursor-pointer flex flex-col h-96">
-                    {blog.mainImage?.asset?.url && (
-                      <div className="relative h-1/2 w-full">
-                        <Image
-                          src={blog.mainImage.asset.url}
-                          alt={blog.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="p-4 flex flex-col justify-between flex-grow">
-                      <h3 className="text-lg font-semibold">{blog.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        {blog.metaDescription}
-                      </p>
-                      <div className="mt-4 flex items-center">
-                        {blog.author?.image?.asset?.url && (
-                          <div className="relative h-8 w-8 mr-2">
-                            <Image
-                              src={blog.author.image.asset.url}
-                              alt={blog.author.name}
-                              fill
-                              className="object-cover rounded-full"
-                            />
-                          </div>
-                        )}
-                        <span className="text-xs text-gray-500">
-                          {blog.author?.name}
-                        </span>
-                      </div>
+            {blogs.map((blog: BlogPreview) => (
+              <Link key={blog._id} href={`/blog/${blog.slug.current}`}>
+                <div className="border rounded-lg overflow-hidden shadow hover:shadow-lg cursor-pointer flex flex-col h-96">
+                  {blog.mainImage?.asset?.url && (
+                    <div className="relative h-1/2 w-full">
+                      <Image
+                        src={blog.mainImage.asset.url}
+                        alt={blog.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4 flex flex-col justify-between flex-grow">
+                    <h3 className="text-lg font-semibold">{blog.title}</h3>
+                    <p className="text-sm text-gray-600">
+                      {blog.metaDescription}
+                    </p>
+                    <div className="mt-4 flex items-center">
+                      {blog.author?.image?.asset?.url && (
+                        <div className="relative h-8 w-8 mr-2">
+                          <Image
+                            src={blog.author.image.asset.url}
+                            alt={blog.author.name}
+                            fill
+                            className="object-cover rounded-full"
+                          />
+                        </div>
+                      )}
+                      <span className="text-xs text-gray-500">
+                        {blog.author?.name}
+                      </span>
                     </div>
                   </div>
-                </Link>
-              )
-            )}
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       ) : (
