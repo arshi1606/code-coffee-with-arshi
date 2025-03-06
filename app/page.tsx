@@ -101,7 +101,7 @@ export default async function HomePage() {
                       </div>
                     )}
                     <div className="p-4 md:p-6">
-                      <h3 className="text-xl md:text-2xl font-black mb-2 hover:text-indigo-600 transition-colors">
+                      <h3 className="text-xl md:text-2xl text-black font-black mb-2 hover:text-indigo-600 transition-colors">
                         {blog.title}
                       </h3>
                       {blog.metaDescription && (

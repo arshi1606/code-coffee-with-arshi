@@ -89,7 +89,7 @@ export default async function CategoryPage({ params }: PageProps) {
                       </div>
                     )}
                     <div className="p-4 flex flex-col justify-between flex-grow">
-                      <h3 className="text-lg font-semibold">{blog.title}</h3>
+                      <h3 className="text-lg text-black font-semibold">{blog.title}</h3>
                       <p className="text-sm text-gray-600">
                         {blog.metaDescription}
                       </p>
