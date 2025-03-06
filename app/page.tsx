@@ -64,7 +64,7 @@ export default async function HomePage() {
           </Link>
           <Link
             href="/about"
-            className="bg-transparent border border-[#205161] text-[#205161] px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-[#205161] hover:text-white shadow-md"
+            className="bg-transparent border border-white text-white px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-white hover:text-[#205161] shadow-md"
           >
             Learn More About Me
           </Link>
