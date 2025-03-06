@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { HomeIcon} from 'lucide-react';
+import Link from 'next/link';
 
 export default function NotFound() {
   return (
@@ -21,13 +21,13 @@ export default function NotFound() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a 
+          <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#2DAA9E] text-white rounded-lg hover:bg-[#3d5856] transition-colors duration-200"
           >
           
             <span>Go Home</span>
-          </a>
+          </Link>
         </div>
       </div>
     </main>
