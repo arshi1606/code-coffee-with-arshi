@@ -147,7 +147,7 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
                   )}
                   <Link
                     href={`/blog/${blog.slug.current}`}
-                    className="mt-auto text-indigo-600 font-medium hover:underline"
+                    className="mt-auto text-[#205161] font-medium hover:underline"
                   >
                     Read More
                   </Link>

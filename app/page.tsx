@@ -217,7 +217,7 @@ export default async function HomePage() {
             Explore surprising stories and insights that challenge the status quo and ignite creative thinking in unexpected ways.
           </p>
           <p className="text-base md:text-lg text-gray-700 mb-6">
-            Whether you&apos;re a seasoned professional or just starting out, our platform offers a unique blend of perspectives designed to inspire and inform.
+            Whether you&apos;re a seasoned professional or just starting out, My platform offers a unique blend of perspectives designed to inspire and inform.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
