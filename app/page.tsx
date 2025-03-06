@@ -58,7 +58,7 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row gap-4 relative z-10">
           <Link
             href="/blogs"
-            className="bg-white text-indigo-700 px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-indigo-100 shadow-md"
+            className="bg-white text-[#205161] px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-indigo-100 shadow-md"
           >
             Explore Articles
           </Link>
@@ -222,7 +222,7 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/contact"
-              className="bg-indigo-400 text-white px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-indigo-800 shadow-md"
+              className="bg-[#205161] text-white px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-indigo-800 shadow-md"
             >
               Contact Me
             </Link>

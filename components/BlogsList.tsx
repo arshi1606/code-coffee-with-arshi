@@ -62,8 +62,8 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  // Pagination window: display at most 5 numbered page buttons
-  const maxPageButtons = 5;
+  // Pagination window: display at most 4 numbered page buttons
+  const maxPageButtons = 4;
   let startPage: number, endPage: number;
   if (totalPages <= maxPageButtons) {
     startPage = 1;
@@ -77,7 +77,7 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
       endPage = totalPages;
     } else {
       startPage = currentPage - Math.floor(maxPageButtons / 2);
-      endPage = currentPage + Math.floor(maxPageButtons / 2);
+      endPage = currentPage + Math.floor(maxPageButtons / 2) - 1;
     }
   }
   const pageNumbers = Array.from(
@@ -91,7 +91,7 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
       {visibleBlogs.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">No blogs found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {visibleBlogs.map((blog) => {
             const mainImageUrl = blog?.mainImage?.asset?.url;
             return (
@@ -159,7 +159,7 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
       )}
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center items-center space-x-2">
+        <div className="mt-8 flex flex-wrap justify-center items-center space-x-2">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
