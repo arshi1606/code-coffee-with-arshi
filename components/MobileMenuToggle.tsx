@@ -56,6 +56,16 @@ export default function MobileMenuToggle({ navbar }: MobileMenuToggleProps): JSX
               </svg>
             </button>
           </div>
+          {/* Added Home button */}
+          <div className="mb-8">
+            <Link
+              href="/"
+              onClick={closeMenu}
+              className="text-2xl font-bold hover:opacity-80 transition-opacity duration-500 block"
+            >
+              Home
+            </Link>
+          </div>
           <nav className="flex flex-col gap-8">
             {navbar.menuItems.map((item, index) => (
               <Link
