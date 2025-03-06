@@ -58,13 +58,13 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row gap-4 relative z-10">
           <Link
             href="/blogs"
-            className="bg-white text-[#205161] px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-indigo-100 shadow-md"
+            className="bg-white text-[#205161] px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-gray-100 shadow-md"
           >
             Explore Articles
           </Link>
           <Link
             href="/about"
-            className="bg-transparent border border-white text-white px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-white hover:text-indigo-700 shadow-md"
+            className="bg-transparent border border-[#205161] text-[#205161] px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-[#205161] hover:text-white shadow-md"
           >
             Learn More About Me
           </Link>
@@ -76,7 +76,7 @@ export default async function HomePage() {
         <div className="max-w-screen-xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-0">Blogs</h2>
-            <Link href="/blogs" className="text-indigo-600 font-medium hover:underline">
+            <Link href="/blogs" className="text-[#205161] font-medium hover:underline">
               View All Blogs
             </Link>
           </div>
@@ -101,7 +101,7 @@ export default async function HomePage() {
                       </div>
                     )}
                     <div className="p-4 md:p-6">
-                      <h3 className="text-xl md:text-2xl text-black font-black mb-2 hover:text-indigo-600 transition-colors">
+                      <h3 className="text-xl md:text-2xl text-black font-black mb-2 hover:text-[#205161] transition-colors">
                         {blog.title}
                       </h3>
                       {blog.metaDescription && (
@@ -132,7 +132,7 @@ export default async function HomePage() {
                       </div>
                       <Link
                         href={`/blog/${blog.slug.current}`}
-                        className="text-indigo-600 font-medium hover:underline mt-3 inline-block text-sm md:text-base"
+                        className="text-[#205161] font-medium hover:underline mt-3 inline-block text-sm md:text-base"
                       >
                         Read More
                       </Link>
@@ -157,7 +157,7 @@ export default async function HomePage() {
         <div className="max-w-screen-xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-0">Categories</h2>
-            <Link href="/categories" className="text-indigo-600 font-medium hover:underline">
+            <Link href="/categories" className="text-[#205161] font-medium hover:underline">
               View All Categories
             </Link>
           </div>
@@ -222,7 +222,7 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/contact"
-              className="bg-[#205161] text-white px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-indigo-800 shadow-md"
+              className="bg-[#205161] text-white px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold transition transform hover:scale-105 hover:bg-[#1a3c4e] shadow-md"
             >
               Contact Me
             </Link>
