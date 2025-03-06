@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import BlogNavbar from "./Blogs_Navbar";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,8 +24,10 @@ interface BlogsListProps {
 
 const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [visibleCount, setVisibleCount] = useState<number>(9);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 6; // Display 6 blogs per page
 
+  // Filter blogs based on search term
   const filteredBlogs = useMemo(() => {
     const trimmedSearchTerm = searchTerm.trim().toLowerCase();
     if (trimmedSearchTerm === "") {
@@ -39,12 +41,49 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
     );
   }, [blogs, searchTerm]);
 
-  // Slice the filtered blogs to show only a limited amount
-  const visibleBlogs = filteredBlogs.slice(0, visibleCount);
+  // Reset current page to 1 when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 9);
+  const totalPages = Math.ceil(filteredBlogs.length / pageSize);
+
+  // Get blogs for the current page
+  const visibleBlogs = filteredBlogs.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  // Pagination window: display at most 5 numbered page buttons
+  const maxPageButtons = 5;
+  let startPage: number, endPage: number;
+  if (totalPages <= maxPageButtons) {
+    startPage = 1;
+    endPage = totalPages;
+  } else {
+    if (currentPage <= Math.ceil(maxPageButtons / 2)) {
+      startPage = 1;
+      endPage = maxPageButtons;
+    } else if (currentPage + Math.floor(maxPageButtons / 2) >= totalPages) {
+      startPage = totalPages - maxPageButtons + 1;
+      endPage = totalPages;
+    } else {
+      startPage = currentPage - Math.floor(maxPageButtons / 2);
+      endPage = currentPage + Math.floor(maxPageButtons / 2);
+    }
+  }
+  const pageNumbers = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
 
   return (
     <>
@@ -118,14 +157,35 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
           })}
         </div>
       )}
-      {/* Load More Button */}
-      {visibleCount < filteredBlogs.length && (
-        <div className="mt-8 text-center">
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center space-x-2">
           <button
-            onClick={handleLoadMore}
-            className="px-6 py-2 bg-[#205161] text-white rounded-full hover:bg-[#272f31] transition"
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+            className="px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Load More
+            Previous
+          </button>
+          {pageNumbers.map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 border rounded transition-colors ${
+                page === currentPage
+                  ? "bg-[#205161] text-white"
+                  : "bg-white text-[#205161] hover:bg-gray-200"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
           </button>
         </div>
       )}

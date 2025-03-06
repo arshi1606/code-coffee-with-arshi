@@ -133,3 +133,4 @@ export const categoryQuery = groq`
     }
   }
 `;
+

@@ -1,10 +1,39 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
+function ScrollUpButton(): JSX.Element {
+  const scrollUp = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <button
+      onClick={scrollUp}
+      className="absolute bottom-8 right-8 p-3 bg-white text-[#205161] border border-[#205161] rounded-full shadow-lg hover:bg-gray-200 active:bg-transparent transition-colors duration-200"
+      aria-label="Scroll to top"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2}
+        stroke="currentColor"
+        className="w-6 h-6"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+      </svg>
+    </button>
+  );
+}
+
 export default function Footer(): JSX.Element {
   return (
-    <footer className="bg-[#205161] text-white py-10">
+    <footer className="relative bg-[#205161] text-white py-10">
       <div className="container mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
@@ -90,6 +119,7 @@ export default function Footer(): JSX.Element {
           </p>
         </div>
       </div>
+      <ScrollUpButton />
     </footer>
   );
 }
