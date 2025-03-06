@@ -161,10 +161,11 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
       {totalPages > 1 && (
         <div className="mt-8 overflow-x-auto">
           <div className="flex justify-center items-center space-x-2 min-w-max">
+            {/* Previous button visible only on medium screens and up */}
             <button
               onClick={handlePrevious}
               disabled={currentPage === 1}
-              className="px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="hidden md:inline-block px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
@@ -181,10 +182,11 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
                 {page}
               </button>
             ))}
+            {/* Next button visible only on medium screens and up */}
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="hidden md:inline-block px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
