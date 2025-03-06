@@ -4,17 +4,24 @@ import Image from "next/image";
 import imageUrlBuilder from "@sanity/image-url";
 import { client } from "@/lib/sanity/quires/sanityclient";
 import { getCategories } from "@/lib/sanity/quires/getCategories";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
-// Setup the URL builder for Sanity images
 const builder = imageUrlBuilder(client);
-function urlFor(source: any) {
+
+function urlFor(source: SanityImageSource) {
   return builder.image(source).url();
+}
+
+interface SanityImage {
+  asset?: {
+    _ref: string;
+  };
 }
 
 interface Category {
   title: string;
   slug?: { current: string };
-  image?: string | any;
+  image?: string | SanityImage;
   description?: string;
 }
 
@@ -29,11 +36,10 @@ export default async function CategoriesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {categories.map((category, index) => {
           let imageUrl: string | null = null;
-          // If image is a non-empty string, use it; otherwise, try building the URL from the asset object.
           if (typeof category.image === "string" && category.image.trim() !== "") {
             imageUrl = category.image;
-          } else if (category.image && category.image.asset?._ref) {
-            imageUrl = urlFor(category.image);
+          } else if (category.image && (category.image as SanityImage).asset?._ref) {
+            imageUrl = urlFor(category.image as SanityImage);
           }
 
           return (
