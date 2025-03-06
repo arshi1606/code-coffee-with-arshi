@@ -62,7 +62,7 @@ export default function MobileMenuToggle({ navbar }: MobileMenuToggleProps): JSX
                 key={index}
                 href={item.link}
                 onClick={closeMenu}
-                className="text-2xl font-bold hover:opacity-80 transition-opacity duration-200"
+                className="text-2xl font-bold hover:opacity-80 transition-opacity duration-500"
               >
                 {item.title}
               </Link>

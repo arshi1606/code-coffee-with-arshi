@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { getNavbar } from "@/lib/sanity/quires/Navbarquires";
 import MobileMenuToggle from "./MobileMenuToggle";
-import { TfiAlignJustify as ReorderIcon } from "react-icons/tfi";
 
 export const revalidate = 60;
 
@@ -56,21 +55,6 @@ function Logo(): JSX.Element {
         alt="Logo"
         width={175}
         height={75}
-        priority
-        className="w-auto"
-      />
-    </Link>
-  );
-}
-
-function LogoSmall(): JSX.Element {
-  return (
-    <Link href="/">
-      <Image
-        src="/logo.png"
-        alt="Logo"
-        width={140}
-        height={60}
         priority
         className="w-auto"
       />
