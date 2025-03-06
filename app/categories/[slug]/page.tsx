@@ -40,7 +40,7 @@ export default async function CategoryPage({ params }: PageProps) {
   const { title, description, image, blogs } = categoryData;
 
   return (
-    <div className="container mx-auto py-10 px-4 min-h-screen">
+    <div className="container mx-auto bg-gradient-to-b from-gray-50 to-gray-200 py-10 px-4 min-h-screen">
       <h1 className="text-4xl font-extrabold text-center text-gray-800">
         {title}
       </h1>
