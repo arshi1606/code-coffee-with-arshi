@@ -82,7 +82,7 @@ export default function CategoriesPage() {
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
         Explore Categories
       </h1>
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {visibleCategories.map((category, index) => {
           let imageUrl: string | null = null;
           if (
@@ -139,31 +139,33 @@ export default function CategoriesPage() {
       </div>
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center items-center space-x-2">
+        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-2">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            className="px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hidden sm:inline px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
-          {pageNumbers.map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 border rounded transition-colors ${
-                page === currentPage
-                  ? "bg-[#205161] text-white"
-                  : "bg-white text-[#205161] hover:bg-gray-200"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+          <div className="flex space-x-2">
+            {pageNumbers.map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-4 py-2 border rounded transition-colors ${
+                  page === currentPage
+                    ? "bg-[#205161] text-white"
+                    : "bg-white text-[#205161] hover:bg-gray-200"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hidden sm:inline px-4 py-2 border rounded transition-colors bg-white text-[#205161] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>
@@ -172,4 +174,3 @@ export default function CategoriesPage() {
     </div>
   );
 }
-  
