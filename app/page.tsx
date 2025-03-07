@@ -89,54 +89,53 @@ export default async function HomePage() {
                     key={blog._id}
                     className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition transform hover:-translate-y-2"
                   >
-                    {mainImageUrl && (
-                      <div className="relative h-40 md:h-48 w-full">
-                        <Image
-                          src={mainImageUrl}
-                          alt={blog.title || 'Blog Image'}
-                          fill
-                          style={{ objectFit: 'cover' }}
-                          className="transition-transform duration-300 hover:scale-105"
-                        />
-                      </div>
-                    )}
-                    <div className="p-4 md:p-6">
-                      <h3 className="text-xl md:text-2xl text-black font-black mb-2 hover:text-[#205161] transition-colors">
-                        {blog.title}
-                      </h3>
-                      {blog.metaDescription && (
-                        <p className="text-gray-600 mb-3 line-clamp-3 text-sm md:text-base">
-                          {blog.metaDescription}
-                        </p>
+                    <Link
+                      href={`/blog/${blog.slug.current}`}
+                      className="block"
+                    >
+                      {mainImageUrl && (
+                        <div className="relative h-40 md:h-48 w-full">
+                          <Image
+                            src={mainImageUrl}
+                            alt={blog.title || 'Blog Image'}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            className="transition-transform duration-300 hover:scale-105"
+                          />
+                        </div>
                       )}
-                      {/* Author Info Section */}
-                      <div className="flex items-center mt-3">
-                        {blog.author?.image?.asset?.url ? (
-                          <div className="relative h-8 w-8 md:h-10 md:w-10 mr-2">
-                            <Image
-                              src={blog.author.image.asset.url}
-                              alt={blog.author.name || 'Author'}
-                              fill
-                              style={{ objectFit: 'cover' }}
-                              className="rounded-full"
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-8 w-8 md:h-10 md:w-10 mr-2 bg-gray-300 rounded-full flex items-center justify-center">
-                            <span className="text-xs text-gray-500">NA</span>
-                          </div>
+                      <div className="p-4 md:p-6">
+                        <h3 className="text-xl md:text-2xl text-black font-black mb-2 hover:text-[#205161] transition-colors">
+                          {blog.title}
+                        </h3>
+                        {blog.metaDescription && (
+                          <p className="text-gray-600 mb-3 line-clamp-3 text-sm md:text-base">
+                            {blog.metaDescription}
+                          </p>
                         )}
-                        <p className="text-gray-700 font-medium text-sm md:text-base">
-                          {blog.author?.name || 'Unknown Author'}
-                        </p>
+                        {/* Author Info Section */}
+                        <div className="flex items-center mt-3">
+                          {blog.author?.image?.asset?.url ? (
+                            <div className="relative h-8 w-8 md:h-10 md:w-10 mr-2">
+                              <Image
+                                src={blog.author.image.asset.url}
+                                alt={blog.author.name || 'Author'}
+                                fill
+                                style={{ objectFit: 'cover' }}
+                                className="rounded-full"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-8 w-8 md:h-10 md:w-10 mr-2 bg-gray-300 rounded-full flex items-center justify-center">
+                              <span className="text-xs text-gray-500">NA</span>
+                            </div>
+                          )}
+                          <p className="text-gray-700 font-medium text-sm md:text-base">
+                            {blog.author?.name || 'Unknown Author'}
+                          </p>
+                        </div>
                       </div>
-                      <Link
-                        href={`/blog/${blog.slug.current}`}
-                        className="text-[#205161] font-medium hover:underline mt-3 inline-block text-sm md:text-base"
-                      >
-                        Read More
-                      </Link>
-                    </div>
+                    </Link>
                   </article>
                 );
               })}

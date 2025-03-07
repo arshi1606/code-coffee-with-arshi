@@ -10,20 +10,20 @@ interface BlogNavbarProps {
 
 const BlogNavbar: React.FC<BlogNavbarProps> = ({ searchTerm, setSearchTerm }): JSX.Element => {
   return (
-    <div className="flex justify-between items-center w-full mb-16">
+    <div className="flex flex-col md:flex-row justify-between items-center w-full mb-8 md:mb-16">
       {/* Left side: Blog navigation */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 mb-4 md:mb-0">
         <Link href="/blogs">
-          <h1 className="md:text-5xl font-extrabold text-gray-800 tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 tracking-tight">
             All Blogs Post
           </h1>
         </Link>
       </div>
       
       {/* Right side: Enhanced search bar */}
-      <div className="relative w-64">
+      <div className="relative w-full sm:w-64">
         <input
-          className="w-full pr-12 pl-4 py-2 bg-white border border-gray-300 rounded-full text-lg placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-300 transform hover:scale-105"
+          className="w-full pr-12 pl-4 py-2 bg-white border border-gray-300 rounded-full text-lg placeholder-gray-500 focus:outline-none focus:border-[#205161] focus:ring-2 focus:ring-indigo-200 transition duration-300 transform hover:scale-105"
           id="search"
           type="search"
           placeholder="Search..."

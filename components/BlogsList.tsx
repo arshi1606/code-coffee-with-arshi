@@ -95,64 +95,57 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }): JSX.Element => {
           {visibleBlogs.map((blog) => {
             const mainImageUrl = blog?.mainImage?.asset?.url;
             return (
-              <article
-                key={blog._id}
-                className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col"
-              >
-                {mainImageUrl && (
-                  <div className="relative w-full h-60">
-                    <Image
-                      src={mainImageUrl}
-                      alt={blog.title || "Blog Image"}
-                      fill
-                      style={{ objectFit: "cover" }}
-                      className="transition-transform duration-300 hover:scale-110"
-                    />
-                  </div>
-                )}
-                <div className="p-6 flex flex-col flex-grow">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
-                    {blog.title}
-                  </h2>
-                  {blog.author && (
-                    <div className="flex items-center mb-4">
-                      {blog.author.image?.asset?.url && (
-                        <Image
-                          src={blog.author.image.asset.url}
-                          alt={blog.author.name || "Author"}
-                          width={40}
-                          height={40}
-                          className="rounded-full mr-3 border border-gray-300"
-                        />
-                      )}
-                      <span className="text-sm text-gray-600">
-                        by {blog.author.name || "Unknown"}
-                      </span>
+              <Link href={`/blog/${blog.slug.current}`} key={blog._id}>
+                <article className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col cursor-pointer">
+                  {mainImageUrl && (
+                    <div className="relative w-full h-60">
+                      <Image
+                        src={mainImageUrl}
+                        alt={blog.title || "Blog Image"}
+                        fill
+                        style={{ objectFit: "cover" }}
+                        className="transition-transform duration-300 hover:scale-110"
+                      />
                     </div>
                   )}
-                  {blog.publishedAt && (
-                    <p className="text-sm text-gray-500 mb-3">
-                      Published on{" "}
-                      {new Date(blog.publishedAt).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </p>
-                  )}
-                  {blog.metaDescription && (
-                    <p className="text-gray-700 mb-4 line-clamp-3 flex-grow">
-                      {blog.metaDescription}
-                    </p>
-                  )}
-                  <Link
-                    href={`/blog/${blog.slug.current}`}
-                    className="mt-auto text-[#205161] font-medium hover:underline"
-                  >
-                    Read More
-                  </Link>
-                </div>
-              </article>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
+                      {blog.title}
+                    </h2>
+                    {blog.author && (
+                      <div className="flex items-center mb-4">
+                        {blog.author.image?.asset?.url && (
+                          <Image
+                            src={blog.author.image.asset.url}
+                            alt={blog.author.name || "Author"}
+                            width={40}
+                            height={40}
+                            className="rounded-full mr-3 border border-gray-300"
+                          />
+                        )}
+                        <span className="text-sm text-gray-600">
+                          by {blog.author.name || "Unknown"}
+                        </span>
+                      </div>
+                    )}
+                    {blog.publishedAt && (
+                      <p className="text-sm text-gray-500 mb-3">
+                        Published on{" "}
+                        {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    )}
+                    {blog.metaDescription && (
+                      <p className="text-gray-700 mb-4 line-clamp-3 flex-grow">
+                        {blog.metaDescription}
+                      </p>
+                    )}
+                  </div>
+                </article>
+              </Link>
             );
           })}
         </div>
